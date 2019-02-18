@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <TableLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:padding="8dp">
 
         <TableRow
             android:layout_width="wrap_content"
@@ -20,37 +22,50 @@
 
                 <TextView
                     android:id="@+id/textView10"
-                    android:layout_width="wrap_content"
+                    android:layout_width="42dp"
                     android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
                     android:layout_weight="1"
+                    android:padding="10dp"
                     android:text="Parroquia"
+                    android:textColor="#FF5252"
+                    android:textSize="18sp"
                     android:textStyle="bold"
-                    app:fontFamily="casual" />
+                    app:fontFamily="sans-serif-condensed"
+                    tools:layout_height="match_parent" />
 
                 <TextView
                     android:id="@+id/textView8"
-                    android:layout_width="wrap_content"
+                    android:layout_width="49dp"
                     android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
                     android:layout_weight="1"
+                    android:padding="10dp"
                     android:text="Nombre"
+                    android:textColor="#FF5252"
+                    android:textSize="18sp"
                     android:textStyle="bold"
-                    app:fontFamily="casual" />
+                    app:fontFamily="sans-serif-condensed" />
 
                 <TextView
                     android:id="@+id/textView9"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
                     android:layout_weight="1"
+                    android:padding="10dp"
                     android:text="Fecha"
+                    android:textColor="#FF5252"
+                    android:textSize="18sp"
                     android:textStyle="bold"
-                    app:fontFamily="casual" />
+                    app:fontFamily="sans-serif-condensed" />
             </LinearLayout>
 
         </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent">
 
             <ListView
                 android:id="@+id/list_celebraciones"

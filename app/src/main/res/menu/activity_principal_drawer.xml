@@ -6,8 +6,8 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/opc_mapa"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Mostrar mapa" />
+            android:icon="@drawable/ic_menu_mapa"
+            android:title="Mapa" />
         <item
             android:id="@+id/nav_slideshow"
             android:icon="@android:drawable/ic_menu_myplaces"

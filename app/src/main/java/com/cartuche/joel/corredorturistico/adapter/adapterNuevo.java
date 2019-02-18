@@ -54,8 +54,6 @@ public class adapterNuevo extends BaseAdapter {
 
         ImageView imagen = (ImageView) convertView.findViewById(R.id.img_disNuevo);
         TextView lblNombre = (TextView)convertView.findViewById(R.id.txt_disNuRuta);
-        TextView lblLat = (TextView)convertView.findViewById(R.id.txt_disNuLat);
-        TextView lblLong = (TextView)convertView.findViewById(R.id.txt_disNuLong);
 
 
 
@@ -67,8 +65,7 @@ public class adapterNuevo extends BaseAdapter {
         Picasso.with(contexto).load(zonasTuristicas.getImagen()).resize(384,148).into(imagen);
 
         lblNombre.setText(zonasTuristicas.getNombre());
-        lblLat.setText(zonasTuristicas.getLatitud()+"");
-        lblLong.setText(zonasTuristicas.getLongitud()+"");
+
 
 
 

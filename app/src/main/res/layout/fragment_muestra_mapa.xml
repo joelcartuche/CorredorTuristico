@@ -31,24 +31,6 @@
             map:layout_constraintTop_toTopOf="parent"
             tools:context=".Mapa" />
 
-        <android.support.design.widget.NavigationView
-            android:id="@+id/navigation_detalle"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:visibility="visible"
-            map:layout_constraintStart_toStartOf="parent"
-            map:layout_constraintTop_toTopOf="parent">
-
-            <Button
-                android:id="@+id/btn_minimizarView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Button" />
-        </android.support.design.widget.NavigationView>
-
         <com.getbase.floatingactionbutton.FloatingActionsMenu
             android:id="@+id/multiple_actions"
             android:layout_width="wrap_content"
@@ -70,28 +52,28 @@
                 android:id="@+id/btn_vistaSatelite2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                fab:fab_colorNormal="?attr/colorPrimaryDark"
+                fab:fab_colorNormal="@color/colorAccent"
                 fab:fab_icon="@drawable/ic_mundo"
                 fab:fab_size="mini"
-                fab:fab_title="vista satelital" />
+                fab:fab_title="Vista Satelital" />
 
             <com.getbase.floatingactionbutton.FloatingActionButton
                 android:id="@+id/btn_vistaNormal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                fab:fab_colorNormal="?attr/colorPrimaryDark"
+                fab:fab_colorNormal="@color/colorAccent"
                 fab:fab_icon="@drawable/ic_mundo_normal"
                 fab:fab_size="mini"
-                fab:fab_title="vista normal" />
+                fab:fab_title="Vista Normal" />
 
             <com.getbase.floatingactionbutton.FloatingActionButton
                 android:id="@+id/btn_celebraciones"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                fab:fab_colorNormal="?attr/colorPrimaryDark"
+                fab:fab_colorNormal="@color/colorAccent"
                 fab:fab_icon="@drawable/ic_celebraciones"
                 fab:fab_size="mini"
-                fab:fab_title="celebraciones" />
+                fab:fab_title="Celebraciones" />
         </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
 
