@@ -24,7 +24,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -54,12 +56,18 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.android.MarkerManager;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+
+import static android.media.tv.TvContract.Programs.Genres.encode;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -100,6 +108,11 @@ public class MuestraMapa extends Fragment implements OnMapReadyCallback,View.OnC
     private ListView list;
     private View fab;
     private NavigationView detalle;
+
+   //img del naviagation
+   private ImageView imagenPrimariaDetalle,imagenAdvertenciaDetalle;
+   private TextView nombreDetalle,descripcionDetalle ;
+
 
 
     public MuestraMapa() {
@@ -166,8 +179,8 @@ public class MuestraMapa extends Fragment implements OnMapReadyCallback,View.OnC
             }
         });
 
-
-
+        detalle = (NavigationView) rootView.findViewById(R.id.navigation_detalle);
+        detalle.setVisibility(View.INVISIBLE);
 
 
         //fin del control
@@ -297,6 +310,179 @@ public class MuestraMapa extends Fragment implements OnMapReadyCallback,View.OnC
             });
         }
 
+        map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                detalle.setVisibility(View.INVISIBLE);
+                request = Volley.newRequestQueue(getActivity());
+
+                String url = "https://sitiosversion1.herokuapp.com/sw/BusquedaHostalesAtractivoNombre/?format=json&nombre="+marker.getTitle().replace(" ","+");
+
+
+
+                Log.i("ddddddddddddddddddddd",marker.getTitle());
+
+                StringRequest jsonObjectRequest = new StringRequest(Request.Method.GET, url,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                //              serverResp.setText("String Response : "+ response.toString());
+                                progreso.hide();
+                                JSONArray array = null;
+
+                                try {
+                                    array = new JSONArray(response);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                                if(array != null) {
+                                    detalle.setVisibility(View.VISIBLE);
+
+                                    for (int i = 0; i < array.length(); i++) {
+                                        JSONObject objecti = null;
+                                        try {
+                                            objecti = array.getJSONObject(i);
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                        try {
+                                            double lat = objecti.getDouble("latitud");
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                        try {
+                                            double lng = objecti.getDouble("longitud");
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                        /*
+                                        String imgAdvertencia = objecti.getString("");
+                                        String detalle = objecti.getString("");*/
+
+
+                                        JSONObject zona = null;
+                                        try {
+                                            zona = objecti.getJSONObject("zona");
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                        // String identificador = objecti.getString("identificador");
+
+                                        String identificador = "";
+
+
+                                        try {
+                                            identificador = objecti.getString("identificador");
+                                            String nombreSitio = objecti.getString("nombre");
+
+                                            JSONObject zonaSitio = objecti.getJSONObject("zona");
+                                            String imagenZona = zonaSitio.getString("imagen");
+
+                                            TextView nombreDetalleSitio = detalle.findViewById(R.id.lbl_detalleNombre);
+                                            nombreDetalleSitio.setText(nombreSitio);
+                                            TextView detalleSito = detalle.findViewById(R.id.lbl_detalleDetalle);
+                                            detalleSito.setVisibility(View.INVISIBLE);
+
+                                            ImageView imgPrincipalSitio = detalle.findViewById(R.id.img_detallePricipal);
+                                            Picasso.with(getActivity()).load(imagenZona).resize(384, 148).into(imgPrincipalSitio);
+                                            ImageView imgAdvertenciaSitio = detalle.findViewById(R.id.img_detalleAdvertencia);
+                                            imgAdvertenciaSitio.setVisibility(View.INVISIBLE);
+
+                                            TextView detalleSitioTitle = detalle.findViewById(R.id.lbl_titleDetalle);
+                                            detalleSitioTitle.setVisibility(View.INVISIBLE);
+
+                                            TextView detalleAdvertenciaTitle = detalle.findViewById(R.id.lbl_titleAdvertencia);
+                                            detalleAdvertenciaTitle.setVisibility(View.INVISIBLE);
+
+
+                                            Button minimizar = (Button) detalle.findViewById(R.id.btn_minimizarView);
+                                            minimizar.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    detalle.setVisibility(View.INVISIBLE);
+                                                }
+                                            });
+
+
+                                        } catch (JSONException e) {
+                                            Log.i("eeeeee", e.getMessage());
+
+                                        }
+
+                                        try {
+
+                                            if (identificador.equalsIgnoreCase("")) {
+                                                //Toast.makeText(getActivity(),"entre",Toast.LENGTH_LONG).show();
+                                                String nombreAtractive = objecti.getString("nombre");
+                                                String imgPrincipal = objecti.getString("imagenSitio");
+                                                String imgAdvertencia = objecti.getString("imagenAdvertencia");
+                                                String descripcion = objecti.getString("descripcion");
+
+                                                Log.i("ddddddddd", "entre data");
+                                                TextView nombreDetalleAtr = detalle.findViewById(R.id.lbl_detalleNombre);
+                                                nombreDetalleAtr.setVisibility(View.VISIBLE);
+                                                nombreDetalleAtr.setText(nombreAtractive);
+
+
+                                                TextView detalleAtr = detalle.findViewById(R.id.lbl_detalleDetalle);
+                                                detalleAtr.setVisibility(View.VISIBLE);
+                                                detalleAtr.setText(descripcion);
+                                                ImageView imgPrincipalAtr = detalle.findViewById(R.id.img_detallePricipal);
+                                                imgPrincipalAtr.setVisibility(View.VISIBLE);
+                                                Picasso.with(getActivity()).load(imgPrincipal).resize(384, 148).into(imgPrincipalAtr);
+
+                                                ImageView imgAdvertenciaAtr = detalle.findViewById(R.id.img_detalleAdvertencia);
+                                                imgAdvertenciaAtr.setVisibility(View.VISIBLE);
+                                                Picasso.with(getActivity()).load(imgAdvertencia).resize(384, 148).into(imgAdvertenciaAtr);
+
+                                                Button minimizar = (Button) detalle.findViewById(R.id.btn_minimizarView);
+
+                                                ImageView imgAdvertenciaSitio = detalle.findViewById(R.id.img_detalleAdvertencia);
+                                                imgAdvertenciaSitio.setVisibility(View.VISIBLE);
+
+                                                TextView detalleSitioTitle = detalle.findViewById(R.id.lbl_titleDetalle);
+                                                detalleSitioTitle.setVisibility(View.VISIBLE);
+
+                                                TextView detalleAdvertenciaTitle = detalle.findViewById(R.id.lbl_titleAdvertencia);
+                                                detalleAdvertenciaTitle.setVisibility(View.VISIBLE);
+
+
+                                                minimizar.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        detalle.setVisibility(View.INVISIBLE);
+                                                    }
+                                                });
+
+                                            }
+
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+
+                                        }
+
+                                    }
+                                }
+
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getContext(),error.toString(),Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+
+
+                request.add(jsonObjectRequest);
+
+
+
+
+                return false;
+            }
+        });
     }
 
 
@@ -356,6 +542,7 @@ public class MuestraMapa extends Fragment implements OnMapReadyCallback,View.OnC
 
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            progreso.hide();
                         }
 
                     }
@@ -433,9 +620,8 @@ public class MuestraMapa extends Fragment implements OnMapReadyCallback,View.OnC
 
                                 map.addPolyline(new PolylineOptions()
                                         .add(new LatLng(lat0, lng0), new LatLng(lat1, lng1))
-                                        .width(5)
-                                        .color(Color.RED));
-
+                                        .width(10)
+                                        .color(Color.rgb(255,82,82)));
 
                             }
 
@@ -444,6 +630,7 @@ public class MuestraMapa extends Fragment implements OnMapReadyCallback,View.OnC
                         } catch (JSONException e) {
                             Toast.makeText(getContext(),e.toString(),Toast.LENGTH_LONG).show();
                             e.printStackTrace();
+                            progreso.hide();
                         }
 
 
@@ -471,7 +658,7 @@ public class MuestraMapa extends Fragment implements OnMapReadyCallback,View.OnC
         String url = "https://sitiosversion1.herokuapp.com/sw/BusquedaHostalesNombre/?format=json&nombre="+nombreRecibido;
 
 
-        final StringRequest jsonObjectRequest = new StringRequest(Request.Method.GET, url,
+        StringRequest jsonObjectRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -511,6 +698,7 @@ public class MuestraMapa extends Fragment implements OnMapReadyCallback,View.OnC
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            progreso.hide();
                         }
 
                     }
@@ -554,21 +742,23 @@ public class MuestraMapa extends Fragment implements OnMapReadyCallback,View.OnC
                                 String nombre = objecti.getString("nombre");
 
 
+
                                 //.title(objecti.getString("nombre"))
                                 LatLng latLng= new LatLng(lat,lng);
                                 MarkerOptions option = new MarkerOptions();
-                                option.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_atractivos)).position(latLng);
-                                option.title(objecti.getString("nombre")).icon(bitmapDescriptorFromVector(getActivity(),R.mipmap.ic_resta)).position(latLng);
-                                option.infoWindowAnchor(14f,14f);
+                                option.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_atractivos)).position(latLng).title(nombre);
+
+
 
 
                                 map.addMarker(option);
-                                map.setInfoWindowAdapter(new CustomInfoWindowAdapter(LayoutInflater.from(getActivity()),nombre,"dd",imagen,imagenAdvertencia));
+                                //map.setInfoWindowAdapter(new CustomInfoWindowAdapter(LayoutInflater.from(getActivity()),nombre,"dd",imagen,imagenAdvertencia));
 
 
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            progreso.hide();
                         }
 
                     }
@@ -615,7 +805,7 @@ public class MuestraMapa extends Fragment implements OnMapReadyCallback,View.OnC
 
 
         }
-        progreso.hide();
+
 
 
 
