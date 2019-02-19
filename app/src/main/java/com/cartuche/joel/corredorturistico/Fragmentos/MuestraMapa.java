@@ -180,7 +180,7 @@ public class MuestraMapa extends Fragment implements OnMapReadyCallback,View.OnC
         });
 
         detalle = (NavigationView) rootView.findViewById(R.id.navigation_detalle);
-        detalle.setVisibility(View.VISIBLE);
+        detalle.setVisibility(View.INVISIBLE);
 
 
         //fin del control

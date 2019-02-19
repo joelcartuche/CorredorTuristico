@@ -1,6 +1,7 @@
 package com.cartuche.joel.corredorturistico.adapter;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -17,10 +18,10 @@ import java.util.ArrayList;
 public class adapterImagenes extends  BaseAdapter{
         private Context contexto;
         private ArrayList<Imagenes> imagenesList;
-        private  boolean[]item ;
+
 
         public adapterImagenes (Context contexto, ArrayList<Imagenes> imagenes) {
-            this.item= new boolean[imagenes.size()];
+
             this.contexto = contexto;
             this.imagenesList = imagenes;
 
@@ -46,10 +47,23 @@ public class adapterImagenes extends  BaseAdapter{
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
             if(convertView==null){
-                convertView = View.inflate(contexto, R.layout.displaynuevozonas,null);
+
+                convertView = View.inflate(contexto, R.layout.gri_item,null);
 
 
             }
+
+            ImageView imagen = convertView.findViewById(R.id.imagen_sitio);
+            TextView nombreSitio = convertView.findViewById(R.id.lbl_sitio);
+            TextView nombreZona = convertView.findViewById(R.id.lbl_zona);
+
+            Imagenes imagenNuevo = imagenesList .get(position);
+
+
+            Picasso.with(contexto).load(imagenNuevo.getImagenes()).resize(190,182).into(imagen);
+
+            nombreSitio.setText(imagenNuevo.getNombre());
+            nombreZona.setText(imagenNuevo.getNombreZona());
 
             return convertView;
 

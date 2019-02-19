@@ -12,6 +12,10 @@
             android:id="@+id/nav_slideshow"
             android:icon="@android:drawable/ic_menu_myplaces"
             android:title="Rutas" />
+        <item
+            android:id="@+id/opc_galeria"
+            android:icon="@android:drawable/ic_menu_gallery"
+            android:title="Galeria" />
 
     </group>
 

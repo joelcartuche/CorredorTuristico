@@ -110,6 +110,10 @@ public class Principal extends AppCompatActivity
             miFragmento = new fragmentoLista();
             fragmetoSeleccionado = true;
 
+        }else if (id == R.id.opc_galeria) {
+            miFragmento = new fragment_galeria();
+            fragmetoSeleccionado = true;
+
         }
         if (fragmetoSeleccionado){
             getSupportFragmentManager().beginTransaction().replace(R.id.content_principal,miFragmento).commit();

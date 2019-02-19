@@ -10,10 +10,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -22,6 +25,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.cartuche.joel.corredorturistico.Fragmentos.MuestraMapa;
 import com.cartuche.joel.corredorturistico.adapter.adapterImagenes;
 import com.cartuche.joel.corredorturistico.modelo.Imagenes;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -104,12 +108,7 @@ public class fragment_galeria extends Fragment {
         View vista =inflater.inflate(R.layout.fragment_fragment_galeria, container, false);
         gridView = (GridView) vista.findViewById(R.id.grid_data);
 
-        cargarTodo();
-
-
-
-
-
+        atractivosCargar();
 
 
         return vista;
@@ -124,10 +123,9 @@ public class fragment_galeria extends Fragment {
         progreso.setMessage("cargando datos.....");
         progreso.show();
 
-
         request = Volley.newRequestQueue(getActivity());
 
-        String url = "https://sitiosversion1.herokuapp.com/sw/BusquedaAtractivoNombre/?format=json&nombre="+nombreRecibido;
+        String url = "https://sitiosversion1.herokuapp.com/sw/listaAtractivos/?format=json";
 
 
         final StringRequest jsonObjectRequest = new StringRequest(Request.Method.GET, url,
@@ -135,8 +133,11 @@ public class fragment_galeria extends Fragment {
                     @Override
                     public void onResponse(String response) {
                         //              serverResp.setText("String Response : "+ response.toString());
+
                         progreso.hide();
                         JSONArray array = null;
+
+                        listaImagenes = new ArrayList<>();
                         try {
                             array = new JSONArray(response);
                             for (int i=0;i<array.length();i++){
@@ -151,9 +152,36 @@ public class fragment_galeria extends Fragment {
                                 listaImagenes.add(img);
 
                             }
+                            adaptador = new adapterImagenes(getActivity(),listaImagenes);
+
+                            gridView.setAdapter(adaptador);
+                            gridView.deferNotifyDataSetChanged();
+
+                            gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                    Imagenes imgData = listaImagenes.get(position);
+
+                                    Fragment miFragmento = new MuestraMapa();
+                                    Bundle args = new Bundle();
+                                    args.putString("nombre", imgData.getNombreZona());
+                                    args.putString("imagen", imgData.getImagenes());
+                                    args.putString("codigo", "mostrarParcial");
+                                    miFragmento.setArguments(args);
+
+
+                                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_principal,miFragmento).commit();
+
+                                }
+                            });
+
+
+
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                             progreso.hide();
+
                         }
 
                     }
@@ -162,6 +190,7 @@ public class fragment_galeria extends Fragment {
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(getContext(),error.toString(),Toast.LENGTH_SHORT).show();
                 progreso.hide();
+
             }
         });
 
@@ -171,29 +200,7 @@ public class fragment_galeria extends Fragment {
     }
 
 
-    private void cargarTodo() {
 
-        String[] rutas = new String[5];
-        rutas[0] = "Parroquia Taquil";
-        rutas[1] = "Parroquia Gualel";
-        rutas[2] = "Parroquia Chantaco";
-        rutas[3] = "Parroquia Chuquiribamba";
-        rutas[4] = "Parroquia el Cisne";
-
-
-        request = Volley.newRequestQueue(getActivity());
-
-        for (int i = 0; i < rutas.length; i++) {
-            nombreRecibido = rutas[i];
-            atractivosCargar();
-
-
-        }
-        adaptador = new adapterImagenes(getActivity(),listaImagenes);
-        gridView.setAdapter(adaptador);
-
-
-    }
 
 //fin
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
