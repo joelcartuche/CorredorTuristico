@@ -180,7 +180,7 @@ public class MuestraMapa extends Fragment implements OnMapReadyCallback,View.OnC
         });
 
         detalle = (NavigationView) rootView.findViewById(R.id.navigation_detalle);
-        detalle.setVisibility(View.INVISIBLE);
+        detalle.setVisibility(View.VISIBLE);
 
 
         //fin del control
@@ -705,7 +705,6 @@ public class MuestraMapa extends Fragment implements OnMapReadyCallback,View.OnC
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getContext(),error.toString(),Toast.LENGTH_SHORT).show();
                 progreso.hide();
             }
         });
