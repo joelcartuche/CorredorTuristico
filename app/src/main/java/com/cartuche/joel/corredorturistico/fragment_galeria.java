@@ -1,12 +1,41 @@
 package com.cartuche.joel.corredorturistico;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridView;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.cartuche.joel.corredorturistico.adapter.adapterImagenes;
+import com.cartuche.joel.corredorturistico.modelo.Imagenes;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 
 /**
@@ -27,7 +56,15 @@ public class fragment_galeria extends Fragment {
     private String mParam1;
     private String mParam2;
 
+
+    private ArrayList<Imagenes> listaImagenes;
+    private GridView gridView;
+
     private OnFragmentInteractionListener mListener;
+    private RequestQueue request;
+    private ProgressDialog progreso;
+    private String nombreRecibido;
+    private adapterImagenes adaptador;
 
     public fragment_galeria() {
         // Required empty public constructor
@@ -64,8 +101,107 @@ public class fragment_galeria extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_fragment_galeria, container, false);
+        View vista =inflater.inflate(R.layout.fragment_fragment_galeria, container, false);
+        gridView = (GridView) vista.findViewById(R.id.grid_data);
+
+        cargarTodo();
+
+
+
+
+
+
+
+        return vista;
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //inicio
+
+
+    private void atractivosCargar(){
+        progreso = new ProgressDialog(getActivity());
+        progreso.setMessage("cargando datos.....");
+        progreso.show();
+
+
+        request = Volley.newRequestQueue(getActivity());
+
+        String url = "https://sitiosversion1.herokuapp.com/sw/BusquedaAtractivoNombre/?format=json&nombre="+nombreRecibido;
+
+
+        final StringRequest jsonObjectRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        //              serverResp.setText("String Response : "+ response.toString());
+                        progreso.hide();
+                        JSONArray array = null;
+                        try {
+                            array = new JSONArray(response);
+                            for (int i=0;i<array.length();i++){
+                                JSONObject objecti = array.getJSONObject(i);
+
+                                String imagen = objecti.getString("imagenSitio");
+                                String nombre = objecti.getString("nombre");
+                                JSONObject datozona = objecti.getJSONObject("zona");
+                                String nombreZona = datozona.getString("nombre");
+
+                                Imagenes img = new Imagenes(imagen,nombre,nombreZona);
+                                listaImagenes.add(img);
+
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            progreso.hide();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getContext(),error.toString(),Toast.LENGTH_SHORT).show();
+                progreso.hide();
+            }
+        });
+
+
+        request.add(jsonObjectRequest);
+
+    }
+
+
+    private void cargarTodo() {
+
+        String[] rutas = new String[5];
+        rutas[0] = "Parroquia Taquil";
+        rutas[1] = "Parroquia Gualel";
+        rutas[2] = "Parroquia Chantaco";
+        rutas[3] = "Parroquia Chuquiribamba";
+        rutas[4] = "Parroquia el Cisne";
+
+
+        request = Volley.newRequestQueue(getActivity());
+
+        for (int i = 0; i < rutas.length; i++) {
+            nombreRecibido = rutas[i];
+            atractivosCargar();
+
+
+        }
+        adaptador = new adapterImagenes(getActivity(),listaImagenes);
+        gridView.setAdapter(adaptador);
+
+
+    }
+
+//fin
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
